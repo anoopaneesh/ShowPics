@@ -36,7 +36,7 @@ class ImageViewModel(val context: Context) : ViewModel() {
     )
 
     // Display videos in alphabetical order based on their display name.
-    val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
+    val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
     private suspend fun queryImages(): List<Image> {
         val images = mutableListOf<Image>()
         withContext(Dispatchers.IO){
