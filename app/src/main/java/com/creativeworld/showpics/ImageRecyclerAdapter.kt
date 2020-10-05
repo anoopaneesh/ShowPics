@@ -12,28 +12,30 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.creativeworld.showpics.databinding.ImageItemBinding
 
-class ImageRecyclerAdapter(val onImageClick : OnImageClickListener) :  ListAdapter<Image,ImageViewHolder>(ImageDiffCallback()){
+class ImageRecyclerAdapter(val imageClickListener: ImageClickListener) :  ListAdapter<Image,ImageViewHolder>(ImageDiffCallback()){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         return ImageViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item,imageClickListener)
     }
 
 
 }
-class ImageViewHolder private constructor(val binding : ImageItemBinding,val onImageClick: OnImageClickListener) : RecyclerView.ViewHolder(binding.root),
-    View.OnClickListener{
-    fun bind(item : Image){
+class ImageViewHolder private constructor(val binding : ImageItemBinding) : RecyclerView.ViewHolder(binding.root){
+    fun bind(item : Image,imageClickListener: ImageClickListener) {
         Glide.with(binding.imageItemView)
             .load(item.uri)
             .thumbnail(0.33f)
             .centerCrop()
             .into(binding.imageItemView)
-
+        binding.imageItemView.setOnClickListener {
+            imageClickListener.onImageClick(item)
+        }
     }
+
     companion object{
         fun from(parent : ViewGroup) : ImageViewHolder{
             val layoutInflater = LayoutInflater.from(parent.context)
@@ -42,12 +44,6 @@ class ImageViewHolder private constructor(val binding : ImageItemBinding,val onI
         }
     }
 
-    override fun onClick(v: View?) {
-        onImageClick.onImageClicked(adapterPosition)
-    }
-}
-interface OnImageClickListener{
-    fun onImageClicked(item : Image)
 }
 
 class ImageDiffCallback : DiffUtil.ItemCallback<Image>(){
@@ -59,4 +55,7 @@ class ImageDiffCallback : DiffUtil.ItemCallback<Image>(){
         return oldItem == newItem
     }
 
+}
+interface ImageClickListener{
+    fun onImageClick(item: Image)
 }
