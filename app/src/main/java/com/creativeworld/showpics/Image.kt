@@ -9,5 +9,5 @@ data class Image (
     val name: String,
     val date: String
 ){
-
+//Data
 }
